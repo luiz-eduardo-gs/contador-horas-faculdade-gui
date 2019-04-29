@@ -7,6 +7,7 @@ package gui;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,7 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class NewUser extends javax.swing.JFrame {
     public static NewUser newUser;
-    private static File salvarArquivoEscolhido;
+    
     /**
      * Creates new form NewUser
      */
@@ -43,8 +44,10 @@ public class NewUser extends javax.swing.JFrame {
         txtHorasConcluidas = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         botaoCancelar = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         jLabel1.setText("Nome de login:");
 
@@ -66,30 +69,37 @@ public class NewUser extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Para criar um novo arquivo, é necessário cadastrar ao menos um usuário");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(133, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3)
-                    .addComponent(txtHorasConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel2)
-                        .addComponent(txtHorasTotais, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addComponent(txtNewLogin)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(botaoCriar)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(botaoCancelar))))
+                    .addComponent(txtHorasConcluidas, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtHorasTotais, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtNewLogin)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(botaoCriar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botaoCancelar)))
                 .addGap(127, 127, 127))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel4)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtNewLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -101,58 +111,98 @@ public class NewUser extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtHorasConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(54, 54, 54)
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botaoCriar)
                     .addComponent(botaoCancelar))
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoCriarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCriarActionPerformed
-        // npn
+  
         /*
             LOGIN,HORASTOTAIS,HORASCONCLUIDAS
         */
         String login = txtNewLogin.getText();
-            if("".equals(login)){
-                JOptionPane.showMessageDialog(null, "O campo usuário deve ser preenchido");
+        
+        if(testLogin() != true){
+            JOptionPane.showMessageDialog(null, "O campo usuário deve ser preenchido");
+            txtNewLogin.requestFocus();
+            
+            /*Main.txtLog.setText("Operação terminada!");
                 Main.newUser.dispose();
+                return;*/
+        }else{
+            String horasTotais = txtHorasTotais.getText();
+            if(horasTotais.equals("")){
+                txtHorasTotais.setText("0");
+                horasTotais = txtHorasTotais.getText();
+            }
+            String horasConcluidas = txtHorasConcluidas.getText();
+            if(horasConcluidas.equals("")){
+                txtHorasConcluidas.setText("0");
+                horasConcluidas = txtHorasConcluidas.getText();
+            }
+
+            JFileChooser salvandoArquivo = new JFileChooser();
+
+            int resultado = salvandoArquivo.showSaveDialog(this);
+
+            if (resultado != JFileChooser.APPROVE_OPTION) {
+
                 return;
             }
-            String horasTotais = txtHorasTotais.getText();
-            String horasConcluidas = txtHorasConcluidas.getText();
-        JFileChooser salvandoArquivo = new JFileChooser();
-        
-        int resultado = salvandoArquivo.showSaveDialog(this);
-        if (resultado != JFileChooser.APPROVE_OPTION) {
-            return;
+
+            File salvarArquivoEscolhido = salvandoArquivo.getSelectedFile();
+            Main.filePath = salvarArquivoEscolhido.getAbsolutePath()+".txt";
+
+            if ((salvarArquivoEscolhido.exists())) {
+                switch(JOptionPane.showConfirmDialog(this, "O arquivo já existe? Deseja sobrescreve-lo?")){
+                    case JOptionPane.OK_OPTION:
+                        try(PrintWriter pw = new PrintWriter(new FileWriter(salvarArquivoEscolhido))){
+                            pw.println(login+","+horasTotais+","+horasConcluidas);
+                            pw.close();
+                        }
+                        catch(IOException e){
+                            Main.txtLog.setText("Error: " + e.getMessage());
+                        }
+                        finally{
+                            Main.filePath = salvarArquivoEscolhido.getAbsolutePath();
+                            Main.txtLog.setText("Arquivo criado com sucesso!");
+                            Main.newUser.dispose();
+                        }
+                        break;
+                    case JOptionPane.NO_OPTION:
+                        Main.filePath = salvarArquivoEscolhido.getAbsolutePath()+".txt";    
+                        break;
+                    default:
+                        break;
+                }
+
+            }else{
+                try(PrintWriter pw = new PrintWriter(new FileWriter(salvarArquivoEscolhido + ".txt"))){
+                            pw.println(login+","+horasTotais+","+horasConcluidas);
+                            pw.close();
+                        }
+                        catch(IOException e){
+
+                        }
+                        finally{
+                            Main.newUser.dispose();
+                        }
+            }
         }
-        salvarArquivoEscolhido = salvandoArquivo.getSelectedFile();
-        
-        if ((salvarArquivoEscolhido.exists() && JOptionPane.showConfirmDialog(this, "O arquivo já existe? Deseja sobrescreve-lo?") != JOptionPane.OK_OPTION)) {
-                return;
-        }
-        try(PrintWriter pw = new PrintWriter(new FileWriter(salvarArquivoEscolhido + ".txt"))){
-            pw.println(login+","+horasTotais+","+horasConcluidas);
-            pw.close();
-        }
-        catch(Exception e){
-            
-        }
-        finally{
-            Main.newUser.dispose();
-        }
-        
-        
     }//GEN-LAST:event_botaoCriarActionPerformed
-    public static File getFile(){
-        return salvarArquivoEscolhido;
+    
+    private boolean testLogin(){
+        return !txtNewLogin.getText().equals("");
     }
   
     private void botaoCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCancelarActionPerformed
+        Main.txtLog.setText("Operação cancelada!");
         Main.newUser.dispose();
     }//GEN-LAST:event_botaoCancelarActionPerformed
 
@@ -198,6 +248,7 @@ public class NewUser extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField txtHorasConcluidas;
     private javax.swing.JTextField txtHorasTotais;
     private javax.swing.JTextField txtNewLogin;

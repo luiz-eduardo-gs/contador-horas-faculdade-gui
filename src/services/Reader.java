@@ -6,32 +6,30 @@
 package services;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  *
  * @author silva
  */
-public class FileReader {
+public class Reader {
    
-    public static String read(File arquivo){
-        System.out.println("chegou aqui");
-        //System.out.println(arquivo.getName());
+    public String read(String path){
+        
         StringBuilder sb = new StringBuilder();
-        try(BufferedReader br = Files.newBufferedReader(Paths.get("teste.txt"))){
+        
+        try(BufferedReader br = new BufferedReader(new FileReader(path))){
             String line;
             while((line = br.readLine()) != null){
+                
                 sb.append(line).append("\n");
             }
+            return sb.toString();
         }
         catch(IOException e){
-            
+            System.out.println("Error: " + e.getMessage());
         }
-        finally{
-            return null;
-        }
+        return null;
     }
 }

@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 package gui;
-
+import java.io.File;
+import javax.swing.JFileChooser;
+import services.Reader;
 /**
  *
  * @author silva
@@ -13,13 +15,18 @@ public class Main extends javax.swing.JFrame {
     public static Main main;
     public static NewUser newUser;
     public static Program program;
-    private static String LOGIN;
+    private static String[] LOGIN;
+    public static String filePath;
+    public static String fileContent;
+    
+    
     /**
      * Creates new form Main
      */
     public Main() {
         initComponents();
         this.setLocationRelativeTo(null);
+        
     }
 
     /**
@@ -36,11 +43,18 @@ public class Main extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtLogin = new javax.swing.JTextField();
         botaoLogar = new javax.swing.JButton();
-        botaoCriarNovo = new javax.swing.JButton();
         botaoSair = new javax.swing.JButton();
+        botaoLimparLog = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuArquivo = new javax.swing.JMenu();
+        menuItemCriarNovo = new javax.swing.JMenuItem();
+        menuItemSelecionarArquivo = new javax.swing.JMenuItem();
+        menuAbout = new javax.swing.JMenu();
+        menuItemComoUsar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        txtLog.setEditable(false);
         txtLog.setColumns(20);
         txtLog.setRows(5);
         jScrollPane1.setViewportView(txtLog);
@@ -54,13 +68,6 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        botaoCriarNovo.setText("Criar Novo");
-        botaoCriarNovo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botaoCriarNovoActionPerformed(evt);
-            }
-        });
-
         botaoSair.setText("Sair");
         botaoSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -68,21 +75,66 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
+        botaoLimparLog.setText("Limpar LOG");
+        botaoLimparLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoLimparLogActionPerformed(evt);
+            }
+        });
+
+        menuArquivo.setText("Arquivo");
+
+        menuItemCriarNovo.setText("Criar novo");
+        menuItemCriarNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemCriarNovoActionPerformed(evt);
+            }
+        });
+        menuArquivo.add(menuItemCriarNovo);
+
+        menuItemSelecionarArquivo.setText("Selecionar arquivo salvo");
+        menuItemSelecionarArquivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSelecionarArquivoActionPerformed(evt);
+            }
+        });
+        menuArquivo.add(menuItemSelecionarArquivo);
+
+        jMenuBar1.add(menuArquivo);
+
+        menuAbout.setText("Sobre");
+
+        menuItemComoUsar.setText("Como usar");
+        menuItemComoUsar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemComoUsarActionPerformed(evt);
+            }
+        });
+        menuAbout.add(menuItemComoUsar);
+
+        jMenuBar1.add(menuAbout);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(botaoLogar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botaoCriarNovo, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE))
-                    .addComponent(txtLogin)
-                    .addComponent(botaoSair, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(botaoLimparLog))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtLogin)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(botaoLogar, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botaoSair)))))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -90,8 +142,9 @@ public class Main extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -99,11 +152,9 @@ public class Main extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(botaoLogar)
-                            .addComponent(botaoCriarNovo))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(botaoSair)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE))
+                            .addComponent(botaoSair))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botaoLimparLog)))
                 .addContainerGap())
         );
 
@@ -111,31 +162,77 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botaoLogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLogarActionPerformed
-        
-        String login = txtLogin.getText();
-        LOGIN = "a";
-        
-        if(login.equals(LOGIN)){
-            program = new Program();
-            program.setVisible(true);
-            program.setTitle("Counter");
-            main.dispose();
-        }else{
-            txtLogin.setText(null);
-            txtLog.setText(txtLog.getText() + "Campo usuário deve ser preenchido!" + "\n");
+        try{
+            Reader reader = new Reader();
+            fileContent = reader.read(Main.filePath);
+
+            LOGIN = fileContent.split(",");
+
+            String login = txtLogin.getText();
+
+
+            if(login.equals(LOGIN[0])){
+                txtLog.setText("Logando...!");
+                program = new Program();
+                program.setVisible(true);
+                program.setTitle("Horas de " + LOGIN[0]);
+                main.setVisible(false);
+                //main.dispose();
+            }else{
+                if(txtLogin.getText().equals("")) txtLog.setText(txtLog.getText() + "Campo usuário deve ser preenchido!" + "\n");
+                else txtLog.setText(txtLog.getText() + "Usuário não cadastrado!" + "\n");
+                txtLogin.setText(null);
+
+            }
+        }
+        catch(NullPointerException e){
+            txtLog.setText(txtLog.getText() + "Error: arquivo salvo não selecionado! \n \"Selecione um arquivo em: arquivo -> selecionar arquivo salvo\"" + "\n");
         }
     }//GEN-LAST:event_botaoLogarActionPerformed
 
-    private void botaoCriarNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCriarNovoActionPerformed
+    private void botaoSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSairActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_botaoSairActionPerformed
+
+    private void botaoLimparLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoLimparLogActionPerformed
+        txtLog.setText(null);
+    }//GEN-LAST:event_botaoLimparLogActionPerformed
+
+    private void menuItemCriarNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCriarNovoActionPerformed
         newUser = new NewUser();
         newUser.setVisible(true);
         newUser.setTitle("Cadastro");
-        
-    }//GEN-LAST:event_botaoCriarNovoActionPerformed
+        txtLog.setText("Criando novo usuário..." + "\n");
+    }//GEN-LAST:event_menuItemCriarNovoActionPerformed
 
-    private void botaoSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSairActionPerformed
+    private void menuItemSelecionarArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSelecionarArquivoActionPerformed
+        JFileChooser salvandoArquivo = new JFileChooser();
+        int resultado = salvandoArquivo.showOpenDialog(this);
         
-    }//GEN-LAST:event_botaoSairActionPerformed
+        if (resultado != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        
+        File salvarArquivoEscolhido = salvandoArquivo.getSelectedFile();
+        Main.filePath = salvarArquivoEscolhido.getAbsolutePath();
+        txtLog.setText("Arquivo selecionado com sucesso!");
+    }//GEN-LAST:event_menuItemSelecionarArquivoActionPerformed
+
+    private void menuItemComoUsarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemComoUsarActionPerformed
+        txtLog.setText("Caso seja a 1ª vez no programa:\n\n"
+                + "1.Vá no menu 'Arquivo' e crie um novo\n"
+                + " arquivo.\n\n"
+                + "2. Dê um nome de usuário e clique\n em 'Criar'\n\n"
+                + "3. Escolha o local para salvar o \narquivo criado.\n\n"
+                + "4. Dê um nome para o arquivo.\n\n"
+                + "5. Após criar o arquivo, basta inserir\n"
+                + "o nome de usuário e clicar em\n"
+                + "'Logar'.\n\n"
+                + "Nas próximas vezes que usar o \nprograma,"
+                + " basta selecionar o \narquivo no menu"
+                + " 'Arquivo' e 'Logar' com\no nome"
+                + " de usuário.");
+    }//GEN-LAST:event_menuItemComoUsarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -174,14 +271,22 @@ public class Main extends javax.swing.JFrame {
         });
     }
     
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botaoCriarNovo;
+    private javax.swing.JButton botaoLimparLog;
     private javax.swing.JButton botaoLogar;
     private javax.swing.JButton botaoSair;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea txtLog;
+    private javax.swing.JMenu menuAbout;
+    private javax.swing.JMenu menuArquivo;
+    private javax.swing.JMenuItem menuItemComoUsar;
+    private javax.swing.JMenuItem menuItemCriarNovo;
+    private javax.swing.JMenuItem menuItemSelecionarArquivo;
+    public static javax.swing.JTextArea txtLog;
     private javax.swing.JTextField txtLogin;
     // End of variables declaration//GEN-END:variables
 }
